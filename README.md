@@ -3,4 +3,71 @@
 ### Goal
 Implement a mini virtual memory system simulator.
 
-- page allocation ¿äÃ»À¸·Î µé¾î¿Â vpnÀ» ÇÏ³ªÀÇ ÆäÀÌÁö ¾È¿¡ µé¾îÀÖ´Â PTE ¼ö·Î ³ª´« ¸òÀ» ÀÌ¿ëÇÏ¿© ¸î ¹øÂ° outer¿¡ µé¾î°¥ °ÇÁö °áÁ¤ÇÏ°í, ³ª¸ÓÁö¸¦ ÀÌ¿ëÇÏ¿© ±× outerÀÇ page table¿¡¼­ ¸î ¹øÂ° entry·Î µé ¾î°¥ °ÇÁö °áÁ¤ÇÏ¿´´Ù. ±×·¸°Ô °áÁ¤µÈ page table¿¡ ¸Þ¸ð¸®¸¦ ÇÒ´çÇØÁØ ÈÄ, »ç¿ëÇÏÁö ¾Ê´Â °¡Àå ÀÛÀº pfnÀ» mapcounts°¡ 0ÀÎ °Íµé Áß °¡Àå ÀÛÀº ÀÎµ¦½º °ªÀ» ÅëÇØ Ã£¾Æ ÇØ´ç page table entryÀÇ pfn °ªÀ¸·Î ¼¼ÆÃÇØÁÖ°í, ÇØ´ç mapcounts[pfn]À» +1 ÇØÁÖ¾ú´Ù(ÇØ´ç pfnÀ» °¡¸®Å°´Â ¾Ö°¡ ÇÏ³ª »ý ±â¹Ç·Î). ±×¸®°í valid¸¦ 1·Î, rw ¿äÃ»À¸·Î ¿Ô´Ù¸é writableµµ 1·Î ÇØÁÖ¾ú´Ù. ÀÌ °úÁ¤¿¡¼­ µÎ°¡ÁöÀÇ ½ÃÇà Âø¿À¸¦ °Þ¾ú´Ù. Ã¹¹øÂ°´Â rwÀÏ °æ¿ì ÇØ´ç pteÀÇ writableÀ» 1·Î ÇØÁÙ ¶§, rw°¡ RW_WRITEÀÏ °æ¿ì pteÀÇ writable À» 1·Î ¹Ù²ãÁÖµµ·Ï Â®´Âµ¥, ¾Ë°íº¸´Ï ¿äÃ»¹ÞÀº rw´Â 3À¸·Î µé¾î¿À°í RW_WRITE´Â 2¿´±â ¶§¹®¿¡ Á¦´ë·Î ÀÛµ¿ÇÏÁö ¾Ê¾Ò´Ù. µû¶ó¼­ rw°¡ RW_WRITEÀÏ °æ¿ì¸¦ rw°¡ 3ÀÏ °æ¿ì·Î ¹Ù²Ù¾î ÇØ°áÇÏ¿´´Ù. µÎ¹øÂ° ½ÃÇàÂø¿À´Â, currentÀÇ outer pagetableÀ» ¸Å¹ø ÇÒ´çÇØÁÖµµ·Ï ÄÚµå¸¦ ÀÛ¼ºÇÏ¿© ÀÌ¹Ì Á¸ÀçÇÏ ´Â outer pagetable¸¦ µ¤¾î¼­ ¶Ç »õ·Î »ý¼ºµÇ´Â ¹®Á¦¸¦ °Þ¾ú´Ù. ÀÌ¸¦ ÇØ´ç outer pagetableÀÌ NULLÀÎÁö Ã¼Å©ÇÏ´Â Á¶°Ç¹®À» ÅëÇÏ¿© ÀÌ¹Ì Á¸ÀçÇÏ¸é ¸Þ¸ð¸® ÇÒ´çÀ» ÇØÁÖÁö ¾Êµµ·Ï ÇÏ¿© ÇØ°áÇÏ¿´ ´Ù. - how I implement deallocation ¿ì¼± vpnÀ» ÇÏ³ªÀÇ page¿¡ µé¾îÀÖ´Â pte °³¼ö·Î ³ª´©¾î ¸òÀº outerÀÇ ¸î ¹øÂ°ÀÎÁö, ³ª¸ÓÁö´Â page tableÀÇ ¸î ¹øÂ° entryÀÎÁö ¾Ë¾Æ³»¾ú´Ù. ±×·¸°Ô ÇØ´ç pte·Î °¡¼­ pfn¸¦ Ã£¾Æ³»¾î ±× pfnÀ» ÀÎµ¦½º·Î ÇÏ´Â mapcounts¸¦ -1 ÇØÁÖ°í(ÇØ´ç pfnÀ» °¡¸®Å°´Â ¾Ö°¡ ÇÏ³ª ¾ø¾îÁö¹Ç·Î), ÇØ´ç pteÀÇ pfn, valid, writableÀ» ¸ðµÎ 0À¸·Î ÃÊ±âÈ­ÇØÁÖ¾ú´Ù. ±×¸®°í ³ª¼­ validcount¶ó´Â º¯¼ö¸¦ ÀÌ¿ëÇÏ¿© ÇöÀç µ¹°íÀÖ´Â processÀÇ ¸ðµç Á¸ÀçÇÏ´Â °¢ page tableÀÇ pteµéÀ» ¹Ýº¹¹®À» ÅëÇØ µ¹¸é¼­ ÇÏ³ªÀÇ page table ¾È¿¡ validÇÑ pte°¡ Á¸ÀçÇÏ´ÂÁö vallidcount·Î ¼¼¸®°í ¸¸¾à Á¸ÀçÇÏ´Â valid pte°¡ ¾ø´Ù¸é ÇØ´ç page table¸¦ free½ÃÄÑÁÖ¾î ¾ø¾ÖÁØ´Ù. ÀÌ¶§ ÇØ´ç page tableÀ» ¹Ù·Î free ½ÃÄÑÁÖ¾ú´õ´Ï ÇØ´ç page tableÀº »ç¶óÁöÁöµµ ¾Ê¾ÒÀ»»Ó´õ·¯ ÀÌ »óÇÑ °ªÀÌ pteÀÇ pfn¿¡ µé¾î°¡ ÀÖ¾ú´Ù. ÀÌ´Â freeÇÏ±â Á÷Àü¿¡ ÇØ´ç page tableÀ» NULL ½ÃÄÑÁØ ÈÄ free ÇÔÀ¸·Î½á ÇØ°áÇÏ¿´´Ù. - how I implement fork currentÀÇ pid¿Í ¿äÃ»¹ÞÀº pid¸¦ ºñ±³ÇÏ¿©, switchÇÏ·Á´Â process°¡ ÇöÀç µ¹°íÀÖ´Â process¶ó¸é Çö Àç µ¹°íÀÖ´Â process¸¦ ±×´ë·Î µÎ°í, ±×°Ô ¾Æ´Ï¶ó¸é ¿äÃ»ÇÑ process°¡ processes (list_head)¿¡ Á¸ ÀçÇÏ´ÂÁö list_for_each_entry¸¦ ÀÌ¿ëÇÏ¿© Ã¼Å©ÇÑ´Ù. ¸¸¾à processes¿¡ Á¸ÀçÇÑ´Ù¸é current¸¦ ¿äÃ»ÇÑ pid¸¦ °¡Áö´Â process·Î ¹Ù²ãÁÖ°í ptbrÀ» ±× processÀÇ pagetableÀ» °¡¸®Å°µµ·Ï ÇØÁØ´Ù. ±×·¯³ª ¿äÃ»ÇÑ process°¡ processes¿¡ Á¸ÀçÇÏÁö ¾Ê´Â´Ù¸é current processÀÇ page tableÀ» forkÇÑ´Ù. Fork´Â rq_process¸¦ ÇÏ³ª »ý¼ºÇÏ¿© outer page¿¡ ¸Þ¸ð¸®¸¦ ÇÒ´çÇØÁØ ÈÄ, rq_processÀÇ pid¸¦ ¿äÃ» ¹ÞÀº pid·Î ¼¼ÆÃÇØÁÖ°í current¿¡ Á¸ÀçÇÏ´Â outer page entry¿Í ±× ¾ÈÀÇ pteµéÀ» ÇÏ³ªÇÏ³ª µ¹¸é¼­ validÀÎ entry¿¡ ´ëÇÑ Á¤º¸¸¦ rq_processÀÇ ¶È°°Àº À§Ä¡ÀÇ pte Á¤º¸·Î ±×´ë·Î °¡Á®¿À°í ÇØ´ç pfn ÀÇ mapcounts¸¦ +1 ÇØÁØ´Ù. ¸¸¾à currentÀÇ pte°¡ writableÀÌ 1ÀÌ¶ó¸é, µÑÀÌ °°ÀÌ pfnÀ» °øÀ¯ÇÏ±â ¶§¹®¿¡ ¸¶À½´ë·Î writeÇØ¼­´Â ¾ÈµÇ¹Ç·Î current pteÀÇ writable°ú ¶È°°Àº À§Ä¡ÀÇ rq_processÀÇ pte writableÀ» ¸ðµÎ false·Î ÇØÁØ´Ù. ±×¸®°í ¿ø·¡ writeµµ °¡´ÉÇÑµ¥ fork¸¦ ÇÏ¸é¼­ os°¡ write¸¦ ¸·¾Æ³ù À½À» Ç¥½ÃÇÏ´Â ¿ëµµ·Î pteÀÇ privateº¯¼ö¸¦ 1·Î ¼¼ÆÃÇØÁØ´Ù. Ã³À½¿¡´Â currentÀÇ pte°¡ writableÀÏ °æ¿ì¿¡¸¸ current¿Í rq_processÀÇ private¸¦ 1·Î ¼³Á¤ÇØÁÖ¾ú ´Ù. ÀÌ ¶§¹®¿¡, ÇÑ¹ø forkµÇ¾î¼­ writableÀÌ falseÀÎ ¾ÖµéÀ» ¶Ç forkÇÏ¿© »ý¼ºµÈ pteµµ ¿ø·¡´Â write °¡ °¡´ÉÇÏ´Ù´Â °ÍÀ» private·Î Ç¥½Ã¸¦ ÇØ¾ß ÇÏ´Âµ¥, ÀÌ·± ¾ÖµéÀº private°¡ 1·Î ¼¼ÆÃµÇÁö ¾Ê¾Æ ³ª Áß¿¡ write¸¦ ÇÒ ¶§ copy-on-write°¡ µÇÁö ¾Ê´Â ¹®Á¦°¡ ¹ß»ýÇÏ¿´´Ù. µû¶ó¼­ current¿¡ Á¸ÀçÇÏ´Â outer page entry¿Í ±× ¾ÈÀÇ pteµéÀ», ÇÏ³ªÇÏ³ª µ¹¸é¼­ pte°¡ writableÀÌ 1ÀÎÁö¸¸ Ã¼Å©ÇÏ´Â °ÍÀÌ ¾Æ´Ï¶ó, private°¡ 1ÀÎÁöµµ Ã¼Å©ÇÏ¿© µÑ Áß¿¡ ÇÏ³ª¶óµµ ¸¸Á·ÇÏ¸é °°Àº À§Ä¡ÀÇ rq_processÀÇ pteÀÇ private¸¦ 1·Î ¹Ù²ãÁÖ¾î ³ªÁß¿¡ writeÇÒ ¶§ copy-on-write°¡ µÉ ¼ö ÀÖµµ·Ï ÇØ°áÇØÁÖ¾ú´Ù. - how I implement copy-on-write vpnÀ» ÇÏ³ªÀÇ page ¾È¿¡ µé¾îÀÖ´Â entry¼ö(NR_PTES_PER_PAGE)·Î ³ª´©¾î ¾î¶² outer entry¿¡ ¾î ¶² pte ÀÎÁö ¾Ë¾Æ³»¼­ Á¢±ÙÇÑ´Ù. writeÇÏ·Á´Â ÇØ´ç pteÀÇ private°¡ 1ÀÌ°í mapcount°¡ 1 ÀÌ»óÀÌ¸é fork·Î ÀÎÇØ Àá½Ã write¸¦ ¸·¾Æ³õÀº »óÅÂ¸¦ ¶æÇÏ¹Ç·Î ´Ù¸¥ free pfnÀ» Ã£¾Æ ÇÒ´çÇÏ¿© copy ÇÏ°í ÀÌ ÀüÀÇ pfnÀÇ mapcounts´Â ÇÏ³ª ÁÙÀÎ´Ù. ÇÒ´ç ¹ÞÀº pfnÀº °°ÀÌ °øÀ¯ÇÏ´Â ´Ù¸¥ ¾Ö°¡ ¾øÀ¸¹Ç·Î writableÀ» 1·Î ¹Ù²Ù°í privateµµ 0À¸·Î ¹Ù²Ù¾î ÁØ´Ù. ±×¸®°í true¸¦ ¹ÝÈ¯ÇÏ¿© ´Ù½Ã write¸¦ Àç°³ÇÒ ¼ö ÀÖµµ·Ï ÇÑ´Ù. ¸¸¾à writeÇÏ·Á´Â ÇØ´ç pteÀÇ private°¡ 1ÀÌ°í mapcount°¡ 1ÀÌ¶ó¸é, ÇØ´ç pteÀÇ pfnÀ» °øÀ¯ÇÏ´Â ´Ù¸¥ ¾ÖµéÀÌ ¾øÀ¸¹Ç·Î ´Ù¸¥ pfnÀ» Ã£Áö ¾Ê¾Æµµ µÈ´Ù. µû¶ó¼­ ¿ø·¡ °¡¸®Å°°í ÀÖ´Â pfn¿¡ writeÇØµµ µÈ´Ù´Â °ÍÀÌ´Ù. ÇØ´ç pteÀÇ private¸¦ 0À¸·Î ÇØÁÖ°í, writableÀ» 1·Î ÇØÁØ ÈÄ true¸¦ ¹ÝÈ¯ÇÏ¿© write ¸¦ Àç°³ÇÏµµ·Ï ÇØÁÖ¾ú´Ù. Ã³À½¿¡ ÇØ´ç pfnÀÇ mapcounts°¡ 1ÀÎ °æ¿ì ±× pfnÀ» È¥ÀÚ¸¸ »ç¿ëÇÏ°íÀÖÀ½À» °í·ÁÇÏÁö ¾Ê°í, private°¡ 1ÀÎ °Í¸¸ Ã¼Å©ÇÏ¿© private°¡ 1ÀÎ ¾ÖµéÀº ¸ðµÎ ´Ù¸¥ free pfnÀ» ÇÒ´çÇÏ¿© copy-on-write ÇØÁÖ¾î ½ÃÇàÂø¿À¸¦ °Þ¾ú¾ú´Ù. ÀÌ¿¡ private¿Ü¿¡µµ mapcounts°¡ 1ÀÎÁö 1 ÀÌ»óÀÎÁö Ã¼Å©ÇØÁÖ¾î 1ÀÌ ÀÌ»óÀÏ ¶§ ´Ù¸¥ pfnÀ» Ã£¾Æ copy-on-write¸¦ ÇØÁÖµµ·Ï ¼öÁ¤ÇÏ¿´´Ù.
++ **page allocation**  
+  
+ìš”ì²­ìœ¼ë¡œ ë“¤ì–´ì˜¨ vpnì„ í•˜ë‚˜ì˜ íŽ˜ì´ì§€ ì•ˆì— ë“¤ì–´ìžˆëŠ” PTE ìˆ˜ë¡œ ë‚˜ëˆˆ ëª«ì„ ì´ìš©í•˜ì—¬ ëª‡ ë²ˆì§¸
+outerì— ë“¤ì–´ê°ˆ ê±´ì§€ ê²°ì •í•˜ê³ , ë‚˜ë¨¸ì§€ë¥¼ ì´ìš©í•˜ì—¬ ê·¸ outerì˜ page tableì—ì„œ ëª‡ ë²ˆì§¸ entryë¡œ ë“¤
+ì–´ê°ˆ ê±´ì§€ ê²°ì •í•˜ì˜€ë‹¤. ê·¸ë ‡ê²Œ ê²°ì •ëœ page tableì— ë©”ëª¨ë¦¬ë¥¼ í• ë‹¹í•´ì¤€ í›„, ì‚¬ìš©í•˜ì§€ ì•ŠëŠ” ê°€ìž¥
+ìž‘ì€ pfnì„ mapcountsê°€ 0ì¸ ê²ƒë“¤ ì¤‘ ê°€ìž¥ ìž‘ì€ ì¸ë±ìŠ¤ ê°’ì„ í†µí•´ ì°¾ì•„ í•´ë‹¹ page table entryì˜
+pfn ê°’ìœ¼ë¡œ ì„¸íŒ…í•´ì£¼ê³ , í•´ë‹¹ mapcounts[pfn]ì„ +1 í•´ì£¼ì—ˆë‹¤(í•´ë‹¹ pfnì„ ê°€ë¦¬í‚¤ëŠ” ì• ê°€ í•˜ë‚˜ ìƒ
+ê¸°ë¯€ë¡œ). ê·¸ë¦¬ê³  validë¥¼ 1ë¡œ, rw ìš”ì²­ìœ¼ë¡œ ì™”ë‹¤ë©´ writableë„ 1ë¡œ í•´ì£¼ì—ˆë‹¤. ì´ ê³¼ì •ì—ì„œ ë‘ê°€ì§€ì˜
+ì‹œí–‰ ì°©ì˜¤ë¥¼ ê²ªì—ˆë‹¤.
+ì²«ë²ˆì§¸ëŠ” rwì¼ ê²½ìš° í•´ë‹¹ pteì˜ writableì„ 1ë¡œ í•´ì¤„ ë•Œ, rwê°€ RW_WRITEì¼ ê²½ìš° pteì˜ writable
+ì„ 1ë¡œ ë°”ê¿”ì£¼ë„ë¡ ì§°ëŠ”ë°, ì•Œê³ ë³´ë‹ˆ ìš”ì²­ë°›ì€ rwëŠ” 3ìœ¼ë¡œ ë“¤ì–´ì˜¤ê³  RW_WRITEëŠ” 2ì˜€ê¸° ë•Œë¬¸ì—
+ì œëŒ€ë¡œ ìž‘ë™í•˜ì§€ ì•Šì•˜ë‹¤. ë”°ë¼ì„œ rwê°€ RW_WRITEì¼ ê²½ìš°ë¥¼ rwê°€ 3ì¼ ê²½ìš°ë¡œ ë°”ê¾¸ì–´ í•´ê²°í•˜ì˜€ë‹¤.
+ë‘ë²ˆì§¸ ì‹œí–‰ì°©ì˜¤ëŠ”, currentì˜ outer pagetableì„ ë§¤ë²ˆ í• ë‹¹í•´ì£¼ë„ë¡ ì½”ë“œë¥¼ ìž‘ì„±í•˜ì—¬ ì´ë¯¸ ì¡´ìž¬í•˜
+ëŠ” outer pagetableë¥¼ ë®ì–´ì„œ ë˜ ìƒˆë¡œ ìƒì„±ë˜ëŠ” ë¬¸ì œë¥¼ ê²ªì—ˆë‹¤. ì´ë¥¼ í•´ë‹¹ outer pagetableì´
+NULLì¸ì§€ ì²´í¬í•˜ëŠ” ì¡°ê±´ë¬¸ì„ í†µí•˜ì—¬ ì´ë¯¸ ì¡´ìž¬í•˜ë©´ ë©”ëª¨ë¦¬ í• ë‹¹ì„ í•´ì£¼ì§€ ì•Šë„ë¡ í•˜ì—¬ í•´ê²°í•˜ì˜€
+ë‹¤.
+
++ **how I implement deallocation**   
+
+ìš°ì„  vpnì„ í•˜ë‚˜ì˜ pageì— ë“¤ì–´ìžˆëŠ” pte ê°œìˆ˜ë¡œ ë‚˜ëˆ„ì–´ ëª«ì€ outerì˜ ëª‡ ë²ˆì§¸ì¸ì§€, ë‚˜ë¨¸ì§€ëŠ”
+page tableì˜ ëª‡ ë²ˆì§¸ entryì¸ì§€ ì•Œì•„ë‚´ì—ˆë‹¤. ê·¸ë ‡ê²Œ í•´ë‹¹ pteë¡œ ê°€ì„œ pfnë¥¼ ì°¾ì•„ë‚´ì–´ ê·¸ pfnì„
+ì¸ë±ìŠ¤ë¡œ í•˜ëŠ” mapcountsë¥¼ -1 í•´ì£¼ê³ (í•´ë‹¹ pfnì„ ê°€ë¦¬í‚¤ëŠ” ì• ê°€ í•˜ë‚˜ ì—†ì–´ì§€ë¯€ë¡œ), í•´ë‹¹ pteì˜
+pfn, valid, writableì„ ëª¨ë‘ 0ìœ¼ë¡œ ì´ˆê¸°í™”í•´ì£¼ì—ˆë‹¤.
+ê·¸ë¦¬ê³  ë‚˜ì„œ validcountë¼ëŠ” ë³€ìˆ˜ë¥¼ ì´ìš©í•˜ì—¬ í˜„ìž¬ ëŒê³ ìžˆëŠ” processì˜ ëª¨ë“  ì¡´ìž¬í•˜ëŠ” ê° page 
+tableì˜ pteë“¤ì„ ë°˜ë³µë¬¸ì„ í†µí•´ ëŒë©´ì„œ í•˜ë‚˜ì˜ page table ì•ˆì— validí•œ pteê°€ ì¡´ìž¬í•˜ëŠ”ì§€
+vallidcountë¡œ ì„¸ë¦¬ê³  ë§Œì•½ ì¡´ìž¬í•˜ëŠ” valid pteê°€ ì—†ë‹¤ë©´ í•´ë‹¹ page tableë¥¼ freeì‹œì¼œì£¼ì–´ ì—†ì• ì¤€ë‹¤.
+ì´ë•Œ í•´ë‹¹ page tableì„ ë°”ë¡œ free ì‹œì¼œì£¼ì—ˆë”ë‹ˆ í•´ë‹¹ page tableì€ ì‚¬ë¼ì§€ì§€ë„ ì•Šì•˜ì„ë¿ë”ëŸ¬ ì´
+ìƒí•œ ê°’ì´ pteì˜ pfnì— ë“¤ì–´ê°€ ìžˆì—ˆë‹¤. ì´ëŠ” freeí•˜ê¸° ì§ì „ì— í•´ë‹¹ page tableì„ NULL ì‹œì¼œì¤€ í›„
+free í•¨ìœ¼ë¡œì¨ í•´ê²°í•˜ì˜€ë‹¤.
+
++ **how I implement fork**  
+
+currentì˜ pidì™€ ìš”ì²­ë°›ì€ pidë¥¼ ë¹„êµí•˜ì—¬, switchí•˜ë ¤ëŠ” processê°€ í˜„ìž¬ ëŒê³ ìžˆëŠ” processë¼ë©´ í˜„
+ìž¬ ëŒê³ ìžˆëŠ” processë¥¼ ê·¸ëŒ€ë¡œ ë‘ê³ , ê·¸ê²Œ ì•„ë‹ˆë¼ë©´ ìš”ì²­í•œ processê°€ processes (list_head)ì— ì¡´
+ìž¬í•˜ëŠ”ì§€ list_for_each_entryë¥¼ ì´ìš©í•˜ì—¬ ì²´í¬í•œë‹¤. ë§Œì•½ processesì— ì¡´ìž¬í•œë‹¤ë©´ currentë¥¼ ìš”ì²­í•œ
+pidë¥¼ ê°€ì§€ëŠ” processë¡œ ë°”ê¿”ì£¼ê³  ptbrì„ ê·¸ processì˜ pagetableì„ ê°€ë¦¬í‚¤ë„ë¡ í•´ì¤€ë‹¤. ê·¸ëŸ¬ë‚˜
+ìš”ì²­í•œ processê°€ processesì— ì¡´ìž¬í•˜ì§€ ì•ŠëŠ”ë‹¤ë©´ current processì˜ page tableì„ forkí•œë‹¤.
+ForkëŠ” rq_processë¥¼ í•˜ë‚˜ ìƒì„±í•˜ì—¬ outer pageì— ë©”ëª¨ë¦¬ë¥¼ í• ë‹¹í•´ì¤€ í›„, rq_processì˜ pidë¥¼ ìš”ì²­
+ë°›ì€ pidë¡œ ì„¸íŒ…í•´ì£¼ê³  currentì— ì¡´ìž¬í•˜ëŠ” outer page entryì™€ ê·¸ ì•ˆì˜ pteë“¤ì„ í•˜ë‚˜í•˜ë‚˜ ëŒë©´ì„œ
+validì¸ entryì— ëŒ€í•œ ì •ë³´ë¥¼ rq_processì˜ ë˜‘ê°™ì€ ìœ„ì¹˜ì˜ pte ì •ë³´ë¡œ ê·¸ëŒ€ë¡œ ê°€ì ¸ì˜¤ê³  í•´ë‹¹ pfn
+ì˜ mapcountsë¥¼ +1 í•´ì¤€ë‹¤. ë§Œì•½ currentì˜ pteê°€ writableì´ 1ì´ë¼ë©´, ë‘˜ì´ ê°™ì´ pfnì„ ê³µìœ í•˜ê¸°
+ë•Œë¬¸ì— ë§ˆìŒëŒ€ë¡œ writeí•´ì„œëŠ” ì•ˆë˜ë¯€ë¡œ current pteì˜ writableê³¼ ë˜‘ê°™ì€ ìœ„ì¹˜ì˜ rq_processì˜ pte 
+writableì„ ëª¨ë‘ falseë¡œ í•´ì¤€ë‹¤. ê·¸ë¦¬ê³  ì›ëž˜ writeë„ ê°€ëŠ¥í•œë° forkë¥¼ í•˜ë©´ì„œ osê°€ writeë¥¼ ë§‰ì•„ë†¨
+ìŒì„ í‘œì‹œí•˜ëŠ” ìš©ë„ë¡œ pteì˜ privateë³€ìˆ˜ë¥¼ 1ë¡œ ì„¸íŒ…í•´ì¤€ë‹¤.
+ì²˜ìŒì—ëŠ” currentì˜ pteê°€ writableì¼ ê²½ìš°ì—ë§Œ currentì™€ rq_processì˜ privateë¥¼ 1ë¡œ ì„¤ì •í•´ì£¼ì—ˆ
+ë‹¤. ì´ ë•Œë¬¸ì—, í•œë²ˆ forkë˜ì–´ì„œ writableì´ falseì¸ ì• ë“¤ì„ ë˜ forkí•˜ì—¬ ìƒì„±ëœ pteë„ ì›ëž˜ëŠ” write
+ê°€ ê°€ëŠ¥í•˜ë‹¤ëŠ” ê²ƒì„ privateë¡œ í‘œì‹œë¥¼ í•´ì•¼ í•˜ëŠ”ë°, ì´ëŸ° ì• ë“¤ì€ privateê°€ 1ë¡œ ì„¸íŒ…ë˜ì§€ ì•Šì•„ ë‚˜
+ì¤‘ì— writeë¥¼ í•  ë•Œ copy-on-writeê°€ ë˜ì§€ ì•ŠëŠ” ë¬¸ì œê°€ ë°œìƒí•˜ì˜€ë‹¤. ë”°ë¼ì„œ currentì— ì¡´ìž¬í•˜ëŠ”
+outer page entryì™€ ê·¸ ì•ˆì˜ pteë“¤ì„, í•˜ë‚˜í•˜ë‚˜ ëŒë©´ì„œ pteê°€ writableì´ 1ì¸ì§€ë§Œ ì²´í¬í•˜ëŠ” ê²ƒì´
+ì•„ë‹ˆë¼, privateê°€ 1ì¸ì§€ë„ ì²´í¬í•˜ì—¬ ë‘˜ ì¤‘ì— í•˜ë‚˜ë¼ë„ ë§Œì¡±í•˜ë©´ ê°™ì€ ìœ„ì¹˜ì˜ rq_processì˜ pteì˜
+privateë¥¼ 1ë¡œ ë°”ê¿”ì£¼ì–´ ë‚˜ì¤‘ì— writeí•  ë•Œ copy-on-writeê°€ ë  ìˆ˜ ìžˆë„ë¡ í•´ê²°í•´ì£¼ì—ˆë‹¤.  
+
++ **how I implement copy-on-write**  
+
+vpnì„ í•˜ë‚˜ì˜ page ì•ˆì— ë“¤ì–´ìžˆëŠ” entryìˆ˜(NR_PTES_PER_PAGE)ë¡œ ë‚˜ëˆ„ì–´ ì–´ë–¤ outer entryì— ì–´
+ë–¤ pte ì¸ì§€ ì•Œì•„ë‚´ì„œ ì ‘ê·¼í•œë‹¤. writeí•˜ë ¤ëŠ” í•´ë‹¹ pteì˜ privateê°€ 1ì´ê³  mapcountê°€ 1 ì´ìƒì´ë©´
+forkë¡œ ì¸í•´ ìž ì‹œ writeë¥¼ ë§‰ì•„ë†“ì€ ìƒíƒœë¥¼ ëœ»í•˜ë¯€ë¡œ ë‹¤ë¥¸ free pfnì„ ì°¾ì•„ í• ë‹¹í•˜ì—¬ copy í•˜ê³  ì´
+ì „ì˜ pfnì˜ mapcountsëŠ” í•˜ë‚˜ ì¤„ì¸ë‹¤. í• ë‹¹ ë°›ì€ pfnì€ ê°™ì´ ê³µìœ í•˜ëŠ” ë‹¤ë¥¸ ì• ê°€ ì—†ìœ¼ë¯€ë¡œ
+writableì„ 1ë¡œ ë°”ê¾¸ê³  privateë„ 0ìœ¼ë¡œ ë°”ê¾¸ì–´ ì¤€ë‹¤. ê·¸ë¦¬ê³  trueë¥¼ ë°˜í™˜í•˜ì—¬ ë‹¤ì‹œ writeë¥¼ ìž¬ê°œí• 
+ìˆ˜ ìžˆë„ë¡ í•œë‹¤.
+ë§Œì•½ writeí•˜ë ¤ëŠ” í•´ë‹¹ pteì˜ privateê°€ 1ì´ê³  mapcountê°€ 1ì´ë¼ë©´, í•´ë‹¹ pteì˜ pfnì„ ê³µìœ í•˜ëŠ”
+ë‹¤ë¥¸ ì• ë“¤ì´ ì—†ìœ¼ë¯€ë¡œ ë‹¤ë¥¸ pfnì„ ì°¾ì§€ ì•Šì•„ë„ ëœë‹¤. ë”°ë¼ì„œ ì›ëž˜ ê°€ë¦¬í‚¤ê³  ìžˆëŠ” pfnì— writeí•´ë„
+ëœë‹¤ëŠ” ê²ƒì´ë‹¤. í•´ë‹¹ pteì˜ privateë¥¼ 0ìœ¼ë¡œ í•´ì£¼ê³ , writableì„ 1ë¡œ í•´ì¤€ í›„ trueë¥¼ ë°˜í™˜í•˜ì—¬ write
+ë¥¼ ìž¬ê°œí•˜ë„ë¡ í•´ì£¼ì—ˆë‹¤.
+ì²˜ìŒì— í•´ë‹¹ pfnì˜ mapcountsê°€ 1ì¸ ê²½ìš° ê·¸ pfnì„ í˜¼ìžë§Œ ì‚¬ìš©í•˜ê³ ìžˆìŒì„ ê³ ë ¤í•˜ì§€ ì•Šê³ , 
+privateê°€ 1ì¸ ê²ƒë§Œ ì²´í¬í•˜ì—¬ privateê°€ 1ì¸ ì• ë“¤ì€ ëª¨ë‘ ë‹¤ë¥¸ free pfnì„ í• ë‹¹í•˜ì—¬ copy-on-write
+í•´ì£¼ì–´ ì‹œí–‰ì°©ì˜¤ë¥¼ ê²ªì—ˆì—ˆë‹¤. ì´ì— privateì™¸ì—ë„ mapcountsê°€ 1ì¸ì§€ 1 ì´ìƒì¸ì§€ ì²´í¬í•´ì£¼ì–´ 1ì´
+ì´ìƒì¼ ë•Œ ë‹¤ë¥¸ pfnì„ ì°¾ì•„ copy-on-writeë¥¼ í•´ì£¼ë„ë¡ ìˆ˜ì •í•˜ì˜€ë‹¤.
